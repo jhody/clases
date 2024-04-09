@@ -1,5 +1,6 @@
-#CLASE DE REACT
-## subiendo clase a repositorio
+# CLASE DE REACT
+### subiendo clase a repositorio
+### CHATGPT de ayuda para programadores https://chat.openai.com/
 #### Entrar al repositorio donde se va a descargar el repositorio
     git init
     git clone https://github.com/jhody/clases.git
@@ -14,3 +15,8 @@ git commit -m "Add class file React.md"
     git push -u origin upload_files
 
 ### Para forzar la salida de edicion en git se preciona ESC lueg se ingresa :q!
+
+### para subir un archivo modificado
+    git add REACT.md
+    git commit -m "Datos modificados" 
+     git push -u origin upload_files # para subir files a la rama upload_files
