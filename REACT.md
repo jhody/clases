@@ -19,4 +19,7 @@ git commit -m "Add class file React.md"
 ### para subir un archivo modificado
     git add REACT.md
     git commit -m "Datos modificados" 
-     git push -u origin upload_files # para subir files a la rama upload_files
+    git push -u origin upload_files # para subir files a la rama upload_files
+    #### si ya esta establecida la rama 
+    git push
+
