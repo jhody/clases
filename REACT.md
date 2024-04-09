@@ -23,3 +23,5 @@ git commit -m "Add class file React.md"
     #### si ya esta establecida la rama 
     git push
 
+## A instalar
+* ["React Developer Tools"](https://chromewebstore.google.com/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi?hl=es&authuser=0&pli=1)
