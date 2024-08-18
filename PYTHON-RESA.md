@@ -65,6 +65,8 @@ Para crear un entorno virtual, sigue estos pasos:
    - ### Instalar virtualenv para crear entornos virtuales
 
       ```
+      - establecer la version como global
+      pyenv global 3.8.10
       python -m pip install virtualenv
       - saber si esta instalado la version en
       pip show virtualenv
