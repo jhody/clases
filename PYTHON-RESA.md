@@ -71,6 +71,9 @@ Para crear un entorno virtual, sigue estos pasos:
       - saber si esta instalado la version en
       pip show virtualenv
       ```
+   - ### Agregar al path de windows  el comando virtualenv
+      Agregarlo al PATH de windows
+      C:\Users\yhody\.pyenv\pyenv-win\versions\3.8.10\Scripts
    - ### Crear un entorno virtual con pyenv
       dirigirse a una carpeta donde se creara el entorno, abrir cmd y ejecutar:
       ```
