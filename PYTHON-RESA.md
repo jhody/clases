@@ -97,6 +97,13 @@ Una vez que el entorno virtual esté activado, puedes proceder a instalar Rasa
 pip install rasa
 rasa --version
 ```
+#### instalar spacy para el lenguage NLU en español
+[descargar herramientas para c++](https://visualstudio.microsoft.com/es/visual-cpp-build-tools/)
+```
+pip install spacy
+- descargar el modelo
+python -m spacy download es_core_news_md
+```
 
 ### 2.4. Instalar Docker
 
