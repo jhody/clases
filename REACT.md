@@ -9,7 +9,7 @@
 ### Haciendo commit para la rama
 git commit -m "Add class file React.md"
 
-### Creando rama para hithub sin espacios
+### Creando rama para github sin espacios
     git checkout -b "upload_files"
 ### Enviando archivos al repositorio
     git push -u origin upload_files
