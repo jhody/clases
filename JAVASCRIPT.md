@@ -22,5 +22,7 @@ retorna una arreglo que cumple la condicion
 ## LocalStorage
 ```
 localStorage.setItem('history', JSON.stringify(this._tagsHistory));
-localStorage.getItem('history');
+if(localStorage.getItem('history)){
+    JSON.parse(localStorage.getItem('history'));
+}
 ```

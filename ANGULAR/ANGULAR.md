@@ -32,6 +32,21 @@ En angular se puede usar: Angular Universal
 ```
 ng new <nombre de la aplicación> --standalone false
 ```
+### PARA CREAR UNA APLICACION EN ANGULAR
+Ingresar a la carpeta con CD y luego:
+```
+npm init @angular pipesApp
+
+```
+ó tbn:
+```
+ng new heroesApp
+
+```
+Iniciar app
+```
+ng serve
+```
 
 ### PARA SUBIR A PRODUCCIÓN
 dentro de la carpeta del proyecto
@@ -360,7 +375,14 @@ El forRoot es para las rutas principales y el forChild para rutas específicas p
         RouterModule
 })
  ```
-
+Para indicar que el patch es full completo
+ ```
+ {
+    path: '',
+    redirectTo: 'heroes',
+    patchMatch: 'full'
+ }
+ ```
 #### RouterLink
 es el atributo con el valor del path del item del submenu
  ```
@@ -399,7 +421,7 @@ Enviar un id en el url de redirect
  ```
 <a [routerLink]="['/countries/by', valor]">Ver más</a>
  ```
- #### como agregar un modulo independiente al ruteo principal?
+ #### como agregar un modulo independiente al ruteo principal? lazyload
 
  ```
  {
@@ -422,6 +444,19 @@ providers: [provideZoneChangeDetection({eventCoalescing:true}), provideRouter(ro
  id!= number;
  ```
 
+ - ##### rutas hijas en Layout
+
+ ```
+ {
+    path: '',
+    component: LayoutPageComponent,
+    children: [
+        { path: 'new-hero', component: NewPageComponent },
+        { path: ':id', component: HeroPageComponent },
+        { path: '**', redirectTo: 'list' },
+    ]
+ }
+ ```
  #### Direccionar pagina
  ```
  importar router
@@ -434,4 +469,191 @@ return this.router.navigateByUrl('');
 
 ## consideraciones
  function(code:string): Observable<Country | null>{}
+
+## PIPES
+
+[PrimeNG](https://primeng.org/)
+
+[Angular pipes Docs](https://v17.angular.io/api?query=pipe)
+
+ ```
+<h1>{{ title | uppercase }}</h1>
+<h1>{{ title | lowercase }}</h1>
+<h1>{{ title | titlecase }}</h1>
+<h1>{{ title | slice:5:7 | uppercase }}</h1>
+ ```
+
+#### instalar PrimeNG
+
+en el archivo de angular.json, agregar los estilos
+
+"styles":[
+    "src/styles.css",
+    "node_modules/primeng/resources/themes/lara-light-blue/theme.css",
+    "node_modules/primeng/resources/primeng.min.css",
+]
+
+#### importar IDIOMAS, configuración de los con del local del app
+En la parte principal del app app.module.ts 
+
+```
+import moduleName from '@angular/common/locales/es-HN';
+import localeFrCA from '@angular/common/locales/fr-CA';
+```
+
+Para establecer el local idioma
+```
+import { registerLocaleDate } from '@angular/common';
+
+registerLocaleData( moduleName );
+registerLocaleData( localeFrCA );
+```
+En el HTML
+```
+    <span>{{ customDate | date:'long':'GMT-6' }}</span>
+```
+para agregar de manera global en app.module.ts un idioma general para las fechas
+
+```
+providers: [
+    {
+        provide: LOCALE_ID, useValue: 'es-HN'
+    }
+]
+```
+#### PIPE decimales
+```
+{{ totalSells | number:'1.2-2' }}
+```
+
+#### PIPE currency
+
+```
+{{ totalSells | currency:'USD':'symbol-narrow':'1-0-4' }}
+```
+
+#### i18nSelectPipe 
+
+```
+public invitationMap = {
+    male: 'invitarlo',
+    female: 'invitarlo'
+}
+
+<p> {{ gender | i18nSelec:invitationMap }}</p>
+```
+
+
+#### i18nPluralPipe 
+
+```
+public clientsMap = {
+    '=0' : 'no tenemos ningun cliente esperando.',
+    '=1' : 'tenemos un cliente esperando.',
+    '=2' : 'tenemos 2 esperando.',
+    'other' : 'tenemos # clientes esperando.',
+}
+<p>Actualmente {{ clients.length | i18Plural:clientsMap }}</p>
+```
+
+#### SlicePipe
+Corta un array o string
+
+```
+<pre>{{ clients | slice:1,2 }}</pre>
+```
+
+#### KeyValuePipe
+
+```
+public person = {
+    name: 'Yhody',
+
+}
+<li *ngFor="let item of person | keyvalue">
+    <b>{{ item.key | titlecase }} :</b> {{ item.value }}
+</li>
+```
+
+#### AsyncPipe
+Trabaja mas para observables que promesas
+
+Se utiliza para trabajar con datos asíncronos en las plantillas. Permite suscribirse a Observables o Promesas
+
+- con observables:
+
+```
+import { Observable, interval } from 'rxjs';
+
+@Component({
+  selector: 'app-my-component',
+  template: `
+    <p>Current value: {{ counter$ | async }}</p>
+  `
+})
+export class MyComponent {
+  counter$: Observable<number> = interval(1000); // Emite un número cada segundo
+}
+```
+
+## PIPEs personalizados
+
+```
+import { Pipe, PipeTransform } from '@angular/core';
+
+@Pipe({
+  name: 'uppercase'
+})
+export class UppercasePipe implements PipeTransform {
+
+  transform(value: string): string {
+    if (!value) return '';
+    return value.toUpperCase();
+  }
+}
+```
+pasar argumentos
+
+```
+transform( value: string, ...args: any[] ): string{
+    console.log({ args });
+    return value.toUpperCase();
+}
+```
+
+```
+transfor( value: string, toUpper: boolean = fasle ): string {
+
+}
+```
+
+Pipe para ordenar filas por nombre:
+
+```
+transform( heroes: Hero[], sortBy?: keyof Hero | '' ): Hero[] {
+    switch( sortBy ){
+        case 'name':
+            return heroes.sort( (a,b) => ( a.name > b.name ) ? 1 : -1 );
+        case 'color'
+            return heroes.sort( (a,b) => ( a.color > b.color ) ? 1 : -1 );
+    }
+}
+```
+
+# ANGULAR MATERIAL
+[material.angular](https://material.angular.io/)
+
+
+[primeflex](https://primeflex.org/)
+
+instalar material:
+```
+ng add @angular/material
+```
+insralar primeflex
+
+```
+npm install primeflex --save
+```
+
 
