@@ -1,0 +1,5 @@
+
+Instalar [JDK 21](https://www.oracle.com/pe/java/technologies/downloads/#jdk21-windows)
+
+Instalar [IntelliJ IDEA edition](https://www.jetbrains.com/es-es/idea/download/?section=windows)
+

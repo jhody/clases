@@ -48,6 +48,13 @@ Iniciar app
 ng serve
 ```
 
+Si hay errores al ejecutar ng serve:
+
+```
+$env:NODE_OPTIONS="--openssl-legacy-provider"; ng serve
+```
+
+
 ### PARA SUBIR A PRODUCCIÓN
 dentro de la carpeta del proyecto
 
