@@ -829,4 +829,186 @@ except Exception as e:
 finally:
     conexion.close()
 ```
+## Pool de Conexiones
+psycopg2.pool proporciona dos tipos de pool de conexiones:
+
+1️⃣ SimpleConnectionPool(minconn, maxconn, **db_params)
+
+Mantiene un número mínimo de conexiones (minconn), pero puede crecer hasta maxconn.
+
+Es ideal para aplicaciones con tráfico moderado.
+
+2️⃣ ThreadedConnectionPool(minconn, maxconn, **db_params)
+
+Similar a SimpleConnectionPool, pero apto para entornos multihilo.
+
+Útil en aplicaciones web con múltiples usuarios concurrentes.
+
+✅ Resumen
+- ✔️ SimpleConnectionPool → Para aplicaciones con tráfico moderado.
+- ✔️ ThreadedConnectionPool → Para aplicaciones multihilo (web, APIs).
+- ✔️ getconn() y putconn() → Para manejar conexiones dentro del pool.
+- ✔️ contextmanager → Para evitar olvidos al liberar conexiones.
+- ✔️ pool.closeall() → Para cerrar todas las conexiones activas.
+- ✔️ Uso en Flask y otras aplicaciones web.
+
+### Crear un Pool de Conexiones (SimpleConnectionPool)
+
+```python
+import psycopg2
+from psycopg2.pool import SimpleConnectionPool
+
+# Parámetros de conexión
+db_params = {
+    "dbname": "mi_base",
+    "user": "mi_usuario",
+    "password": "mi_contraseña",
+    "host": "localhost",
+    "port": "5432"
+}
+
+# Crear un pool con 1 a 10 conexiones activas
+pool = SimpleConnectionPool(1, 10, **db_params)
+
+# Obtener una conexión del pool
+conexion = pool.getconn()
+cursor = conexion.cursor()
+
+# Ejecutar una consulta
+cursor.execute("SELECT version();")
+print(cursor.fetchone())
+
+# Devolver la conexión al pool
+cursor.close()
+pool.putconn(conexion)
+
+```
+### Uso de ThreadedConnectionPool (Para Aplicaciones Web y Multihilo)
+Si usas un framework como Flask o Django, o ejecutas tareas en múltiples hilos, usa ThreadedConnectionPool.
+
+Beneficio: Soporta múltiples hilos, evitando colisiones en la base de datos.
+```python
+from psycopg2.pool import ThreadedConnectionPool
+
+# Pool de 1 a 10 conexiones, apto para múltiples hilos
+thread_pool = ThreadedConnectionPool(1, 10, **db_params)
+
+# Obtener conexión en un hilo
+conexion = thread_pool.getconn()
+cursor = conexion.cursor()
+cursor.execute("SELECT * FROM usuarios;")
+print(cursor.fetchall())
+
+# Devolver conexión al pool
+cursor.close()
+thread_pool.putconn(conexion)
+```
+### Manejo Automático con contextmanager
+Podemos encapsular la gestión del pool en una función para evitar olvidos al liberar conexiones.
+
+Ventaja:
+
+Garantiza que siempre se libere la conexión, incluso en caso de error.
+```python
+from contextlib import contextmanager
+
+@contextmanager
+def obtener_conexion(pool):
+    conexion = pool.getconn()
+    try:
+        yield conexion
+    finally:
+        pool.putconn(conexion)  # Se asegura de devolver la conexión al pool
+
+# Uso del contexto
+with obtener_conexion(pool) as conexion:
+    with conexion.cursor() as cursor:
+        cursor.execute("SELECT COUNT(*) FROM usuarios;")
+        print(cursor.fetchone())
+
+```
+### Cerrar el Pool de Conexiones
+Cuando el pool ya no se necesita, se debe cerrar correctamente.
+
+Si no cierras el pool, podrías dejar conexiones abiertas en PostgreSQL.
+```python
+pool.closeall()  # Cierra todas las conexiones activas
+```
+### Pool de Conexiones en un Servidor Web con Flask
+Si usas Flask, puedes definir un pool global y usarlo en cada request.
+
+Beneficio:
+
+Reutiliza conexiones sin abrir una nueva por cada request.
+
+Maneja eficientemente múltiples peticiones simultáneas.
+```python
+from flask import Flask, jsonify
+
+app = Flask(__name__)
+
+# Crear el pool global
+pool = SimpleConnectionPool(1, 10, **db_params)
+
+@app.route("/usuarios")
+def obtener_usuarios():
+    with obtener_conexion(pool) as conexion:
+        with conexion.cursor() as cursor:
+            cursor.execute("SELECT * FROM usuarios;")
+            usuarios = cursor.fetchall()
+    return jsonify(usuarios)
+
+if __name__ == "__main__":
+    app.run(debug=True)
+
+```
+### Creación de un Pool de Conexiones Global en una Aplicación
+En una aplicación grande, es común definir un pool de conexiones global para reutilizar conexiones en toda la aplicación.
+```python
+import psycopg2
+from psycopg2.pool import SimpleConnectionPool
+
+# Crear el pool de conexiones global con 5 a 20 conexiones activas
+pool = SimpleConnectionPool(5, 20, dbname="mi_base", user="mi_usuario", 
+                            password="mi_contraseña", host="localhost", port="5432")
+
+def obtener_conexion():
+    """Obtiene una conexión del pool y la devuelve."""
+    return pool.getconn()
+
+def liberar_conexion(conexion):
+    """Libera la conexión para que otro proceso la use."""
+    pool.putconn(conexion)
+
+def cerrar_pool():
+    """Cierra todas las conexiones activas en el pool."""
+    pool.closeall()
+
+```
+### Uso de Pool con with y contextmanager
+Podemos mejorar la gestión del pool con contextmanager, asegurando que las conexiones se devuelvan correctamente.
+
+Beneficio: Manejo seguro de conexiones sin olvidos al cerrarlas.
+```python
+from contextlib import contextmanager
+
+@contextmanager
+def conexion_db():
+    """Obtiene una conexión del pool y la libera automáticamente."""
+    conexion = pool.getconn()
+    try:
+        yield conexion
+    finally:
+        pool.putconn(conexion)  # Libera la conexión al finalizar
+
+# Uso del contexto
+with conexion_db() as conexion:
+    with conexion.cursor() as cursor:
+        cursor.execute("SELECT NOW();")
+        print(cursor.fetchone())  # Muestra la hora del servidor
+
+```
+
+
+
 
