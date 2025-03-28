@@ -1041,6 +1041,220 @@ print(modulo_math.pow(2, 3))  # 8.0
 
 
 ```
+## DICCIONARIOS
+### Creación de diccionarios
+```python
+dic = {'nombre': 'Juan', 'edad': 30, 'ciudad': 'Lima'}
+print(dic)
+
+# con dict()
+dic = dict(nombre='Juan', edad=30, ciudad='Lima')
+print(dic)
+
+# con zip()
+claves = ['nombre', 'edad', 'ciudad']
+valores = ['Juan', 30, 'Lima']
+dic = dict(zip(claves, valores))
+print(dic)
+
+# fromkeys()
+# crea un diccionario nuevo con claves específicas y un mismo valor para todas ellas
+dic = dict.fromkeys(['nombre', 'edad', 'ciudad'], 'Desconocido')
+print(dic)
+
+```
+### Acceso a elementos
+```python
+# usando [], puede generar un error si no existe el elemento
+dic = {'nombre': 'Juan', 'edad': 30}
+print(dic['nombre'])  # Juan
+
+# con get, si no existe denueve None
+print(dic.get('nombre'))  # Juan
+print(dic.get('altura', 'No especificado'))  # No especificado, si no existe
+```
+### Modificación de diccionarios
+```python
+dic['profesion'] = 'Ingeniero'  # Agrega
+dic['edad'] = 31  # Modifica
+print(dic)
+
+# Usando .update(), Permite modificar o agregar múltiples valores.
+dic.update({'altura': 1.75, 'peso': 70})
+print(dic)
+
+```
+### Eliminar Elementos
+```python
+# con del
+del dic['edad']
+print(dic)
+
+# con .pop(), Devuelve el valor eliminado.
+valor = dic.pop('ciudad', 'No existe')
+print(valor)  # Lima
+print(dic)  # {'nombre': 'Juan', 'profesion': 'Ingeniero'}
+
+# Con .popitem(),  extrae y elimina el último par clave-valor
+ultima_clave, ultimo_valor = dic.popitem()
+print(ultima_clave, ultimo_valor)
+
+dic = {}
+if dic:
+    ultima_clave, ultimo_valor = dic.popitem()
+    print(ultima_clave, ultimo_valor)
+else:
+    print("El diccionario está vacío.")
+
+#Vaciar un Diccionario
+dic.clear()
+print(dic)  # {}
+
+```
+### Recorrer un Diccionario
+```python
+# claves
+for clave in dic:
+    print(clave)
+
+#valores
+for valor in dic.values():
+    print(valor)
+
+# Claves y Valores (.items())
+for clave, valor in dic.items():
+    print(f"{clave}: {valor}")
+```
+### Métodos Útiles
+```python
+# copiar un diccionario, Evita modificar el original.
+dic_copia = dic.copy()
+
+# Verificar si una Clave Existe
+if 'nombre' in dic:
+    print("Existe la clave 'nombre'")
+
+# Longitud de un Diccionario
+print(len(dic))
+
+# Diccionarios Anidados
+personas = {
+    'Juan': {'edad': 30, 'ciudad': 'Lima'},
+    'Ana': {'edad': 25, 'ciudad': 'Bogotá'}
+}
+print(personas['Juan']['edad'])  # 30
+```
+### Uso Avanzado
+```python
+# Filtrar Diccionario
+dic = {'a': 10, 'b': 20, 'c': 30}
+filtrado = {k: v for k, v in dic.items() if v > 15}
+print(filtrado)  # {'b': 20, 'c': 30}
+
+#Diccionarios como Contadores
+from collections import Counter
+lista = ['rojo', 'azul', 'rojo', 'verde', 'azul', 'rojo']
+contador = Counter(lista)
+print(contador)  # {'rojo': 3, 'azul': 2, 'verde': 1}
+
+#Usar defaultdict, sino existe la crea del mismo tipo
+from collections import defaultdict
+dic = defaultdict(int)
+dic['x'] += 1
+print(dic)  # {'x': 1}
+
+# decorador
+registro = {}
+def contar_uso(func):
+    def envoltura(*args, **kwargs):
+        registro[func.__name__] = registro.get(func.__name__, 0) + 1
+        return func(*args, **kwargs)
+    return envoltura
+
+@contar_uso
+def saludar():
+    print("¡Hola!")
+
+saludar()
+saludar()
+print(registro)  # {'saludar': 2}
+```
+## CLASES
+```python
+class MiClase:
+    pass  # Clase vacía
+
+objeto = MiClase()
+print(type(objeto))  # <class '__main__.MiClase'>
+
+class Persona:
+    def __init__(self, nombre, edad):
+        self.nombre = nombre  # Atributo de instancia
+        self.edad = edad      # Atributo de instancia
+
+#  Crear un objeto con atributos
+persona1 = Persona("Juan", 30)
+print(persona1.nombre)  # Juan
+print(persona1.edad)    # 30
+
+#métodos
+class Persona:
+    def __init__(self, nombre):
+        self.nombre = nombre  
+
+    def saludar(self):
+        return f"Hola, soy {self.nombre}"
+
+# llamar a un método
+persona1 = Persona("Ana")
+print(persona1.saludar())  # Hola, soy Ana
+```
+### Métodos Especiales (Dunder Methods)
+```python
+# __init__ (Constructor)
+class Auto:
+    def __init__(self, marca):
+        self.marca = marca
+# __str__ (Representación en Texto)
+class Auto:
+    def __init__(self, marca):
+        self.marca = marca
+
+    def __str__(self):
+        return f"Auto de marca {self.marca}"
+
+auto1 = Auto("Toyota")
+print(auto1)  # Auto de marca Toyota
+
+# __repr__ (Representación para Debugging)
+class Auto:
+    def __repr__(self):
+        return f"Auto(marca='{self.marca}')"
+
+```
+### Métodos de Clase y Métodos Estáticos
+```python
+# Método de Clase (@classmethod)
+class Persona:
+    contador = 0
+
+    def __init__(self, nombre):
+        self.nombre = nombre
+        Persona.contador += 1
+
+    @classmethod
+    def cantidad_personas(cls):
+        return cls.contador
+#Llamando el método de clase
+p1 = Persona("Carlos")
+p2 = Persona("Ana")
+print(Persona.cantidad_personas())  # 2
+
+
+
+```
+
+
 
 
 
