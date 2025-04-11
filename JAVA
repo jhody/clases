@@ -3,3 +3,24 @@ Instalar [JDK 21](https://www.oracle.com/pe/java/technologies/downloads/#jdk21-w
 
 Instalar [IntelliJ IDEA edition](https://www.jetbrains.com/es-es/idea/download/?section=windows)
 
+#### Buenas prácticas
+    Notación CamelCase:
+        nombreCliente
+        _nombre
+        $apellidoCompleto
+
+```java
+System.out.println();//imprime salto de línea
+```
+#### variable VAR
+    se usa para definir los tipos implicitamente y el código sea mas legible
+```java
+    var nombre = "Antonio";//el nombre es de tipo String para siempre
+```
+#### constantes
+    con la palabra final
+```JAVA
+    final var DIAS_SEMANA=7;
+```
+
+
