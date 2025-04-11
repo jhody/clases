@@ -776,6 +776,10 @@ for fila in datos:
 #Ana,30,Argentina
 #Luis,22,Chile
 
+diccionario = {'nombre':'Juan','apellido':'Perez','edad':'18'}
+llaves = '-'.join(diccionario.keys())
+valores = '-'.join(diccionario.values())
+print(f'llaves:{llaves}, type:{type(llaves)}')
 ```
 ## LISTAS
 ```python
