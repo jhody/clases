@@ -583,3 +583,964 @@ print(f'Var global fuera función: {var_global}')
 # No es posible acceder a variables locales fuera
 # del bloque donde se definieron
 # print(f'Var local fuera función: {var_local}') # error
+
+# Funciones Anidadas
+# -------------------------------------------
+def calculadora(a, b, operacion='sumar'):
+    # 1. Definir Función anidada
+    def sumar(a, b):
+        return a + b
+
+    def restar(a, b):
+        return a - b
+
+    # 2. Llamamos a la función anidada
+    if operacion == 'sumar':
+        print(f'Resultado sumar: {sumar(a, b)}')
+    elif operacion == 'restar':
+        print(f'Resultado restar: {restar(a, b)}')
+
+calculadora(5, 6)
+calculadora(4, 3, operacion='restar')
+
+# Alcance de Variables (scope)
+
+var_global = 'Variable global'
+
+def imprimir():
+    # Acceder a una variable global
+    print(f'Variable global desde función: {var_global}')
+    # Definición de variable local
+    var_local = 'Variables local'
+    print(f'Variable local desde función: {var_local}')
+
+    def funcion_anidada():
+        print(f'Variable local dentro función anidada: {var_local}')
+
+    funcion_anidada()
+
+imprimir()
+print(f'Var global fuera función: {var_global}')
+# No es posible acceder a variables locales fuera
+# del bloque donde se definieron
+# print(f'Var local fuera función: {var_local}')
+
+# Más de funciones anidadas y alcance de variables
+def funcion_externa():
+    variable_local_externa = 'Variable local externa'
+
+    def funcion_anidada():
+        variable_local_anidada = 'Variable local anidada'
+
+        nonlocal variable_local_externa
+        variable_local_externa = 'Nuevo valor variable local externa'
+
+    funcion_anidada()
+
+    print(f'Valor variable local externa: {variable_local_externa}')
+    # No es posible acceder a una variable local más interna
+    # print(f'Valor variable local anidada: {variable_local_anidada}')
+
+funcion_externa()
+
+# Definimos variable global
+contador = 0
+
+def mostrar_contador():
+    print(contador)
+
+
+def modificar_contador(c):
+    # Sin esta línea no se usa la variable global
+    global contador
+    contador = c
+
+modificar_contador(5)
+mostrar_contador()
+
+
+# Las funciones en python son ciudadanas de primera clase
+# First class citizens
+
+# Definimos la función
+def sumar(a, b):
+    return a + b
+
+# 1. Asignar una función a una variable (no se usan paréntesis)
+mi_funcion = sumar
+
+# Verificar el tipo de variable
+print(type(mi_funcion))
+
+# Llamamos la función a través de la variable
+resultado = mi_funcion(5, 8)
+print(f'Resultado: {resultado}')
+
+# Funciones lambda
+# Son funciones anónimas, y son pequeñas (una línea de código)
+
+# No es posible asignar una función a una variable
+# mi_funcion = def sumar(a, b): return a + b
+
+# Con una función lambda(anónima, sin nombre, y una sola línea de código)
+# No se necesita agregar paréntesis para los parámetros
+# No se necesita usar la palabra return, pero sí debe regresar una expresión
+mi_funcion_lambda = lambda a, b: a + b
+
+resultado = mi_funcion_lambda(4,6)
+print(f'Resultado sumar con función lambda: {resultado}')
+
+# Función lambda que no recibe argumentos (debemos regresar una expresión válida)
+mi_funcion_lambda = lambda: 'Función sin argumentos'
+print(f'Llamar función lambda sin argumentos: {mi_funcion_lambda()}')
+
+# Función lambda con parámetros por default
+mi_funcion_lambda = lambda a=2, b=3: a + b
+print(f'Resultado argumentos por default: {mi_funcion_lambda()}')
+
+# Función lambda con argumentos variables *args y **kwargs
+mi_funcion_lambda = lambda *args, **kwargs: len(args) + len(kwargs)
+print(f'Resultado argumentos variables: {mi_funcion_lambda(1,2,3, a=5,b=6)}')
+
+# Funciones lambda con argumentos, argumentos variables y valores por default
+mi_funcion_lambda = lambda a, b, c=3, *args, **kwargs: a+b+c+len(args)+len(kwargs)
+print(f'Resultado función lambda: {mi_funcion_lambda(1,2,4, 5,6,7,e=5,f=7)}')
+
+# Un closure es una función que defina a otra, y además la regresar
+# la función anidada puede acceder a las variables locales definidas
+# en la función principal o externa
+
+# Función principal
+# def operacion(a, b):
+#     # 1. Definimos una función interna o anidada
+#     def sumar():
+#         return a + b
+#
+#     # 2. Retornar la función
+#     return sumar
+
+# Función principal
+def operacion(a, b):
+    # 1. Definimos una función lambda interna o anidada y la retornamos
+    return lambda: a + b
+
+mi_funcion_closure = operacion(5, 2)
+print(f'Resultado de la función closure: {mi_funcion_closure()}')
+
+# Llamar la función regresada al vuelo
+print(f'Resultado de la función closure al vuelo: {operacion(2,3)()}')
+
+# Decoradores con argumentos
+# Un decorador es una función que recibe una función y regresa una función (al menos)
+# Lo utilizamos para extender funcionalidad de una función
+# 1. Función decorador (a)
+# 2. Función a decorar (b)
+# 3. Función decorada (c)
+# a(b) -> c
+def funcion_decorador_a(funcion_a_decorar_b):
+    def funcion_decorada_c(*args, **kwargs):
+        print('Antes desde la función_decorada_c')
+        resultado = funcion_a_decorar_b(*args, **kwargs)
+        print('Después desde la función decorada_c')
+        return resultado
+
+    return funcion_decorada_c
+
+
+@funcion_decorador_a
+def sumar(a, b):
+    # print(f'Resultado suma: {a + b}')
+    return a + b
+
+resultado = sumar(5, 6)
+print(f'Resultado suma: {resultado}')
+
+# GENERADORES 
+# ----------------------------------------------------------------
+# Generadores
+# Es una función especial, retorna una secuencia de valores
+# suspende la ejecución de la función yield (producir) (no se usar return)
+def generador():
+    yield 1
+    print('Se reanuda la ejecución')
+    yield 2
+    print('Se reanuda la ejecución')
+    yield 3
+
+# Consumimos el generador a demanda
+gen = generador()
+# Con cada llamada consumimos un valor
+print(next(gen))
+print(next(gen))
+print(next(gen))
+# Si tratamos de consumir más valores de los que produce el generador
+# lanza un error de StopIteration
+# print(next(gen))
+
+# Consumiendo los valores del generador con un ciclo for
+for valor in generador():
+    print(f'Número generado: {valor}')
+
+# Generador de números del 1 al 5
+def generador_numeros():
+    for numero in range(1,6):
+        yield numero
+        print('Se reanuda la ejecución de la función')
+
+# Utilizamos el generador
+generador = generador_numeros()
+print(f'Objeto generador: {generador}')
+print(type(generador))
+
+# Consumimos los valores del generador
+for valor in generador:
+    print(f'Número producido: {valor}')
+
+# Consumir a demanda
+generador = generador_numeros()
+try:
+    print(f'consumimos a demanda: {next(generador)}')
+    print(f'consumimos a demanda: {next(generador)}')
+    print(f'consumimos a demanda: {next(generador)}')
+    print(f'consumimos a demanda: {next(generador)}')
+    print(f'consumimos a demanda: {next(generador)}')
+    print(f'consumimos a demanda: {next(generador)}')
+except StopIteration as e:
+    print(f'Error al consumir generador {e}')
+
+# Otra forma de consumir un generador
+generador = generador_numeros()
+while True:
+    try:
+        valor = next(generador)
+        print(f'Impresión valor generado: {valor}')
+    except StopIteration as e:
+        print('Se terminó de iterar el generador')
+        break
+
+# Expresión generadora (es un generador anónimo)
+multiplicacion = (valor*valor for valor in range(4))
+print(type(multiplicacion))
+print(next(multiplicacion))
+print(next(multiplicacion))
+print(next(multiplicacion))
+print(next(multiplicacion))
+# print(next(multiplicacion))
+
+# También se puede pasar una expresión generadora a una función (sin paréntesis)
+import math
+suma = sum(valor*valor for valor in range(4))
+print(f'Resultado suma: {suma}')
+
+
+# Crear un string a partir de un generador creado a partir de una lista
+lista = ['Karla','Gomez', 22]
+contador = 0
+# Definimos una función para incrementar el contador
+def incremetar():
+    global contador
+    contador += 1
+    return contador
+# La primera para es el yield, la segunda es el for, entre paréntesis
+generador = (f'{incremetar()}. {nombre}' for nombre in lista)
+lista = list(generador)
+print(lista) # ['1. Karla','2. Gomez']
+cadena = ', '.join(lista)
+print(f'Cadena generada: {cadena}')
+
+
+# LIST COMPREHENSION
+# ------------------------------
+numeros = range(10)
+lista_pares = []
+
+# Creamos una nueva lista con los valores pares multiplicados por si mismos
+for numero in numeros:
+    # Revisamos si es un número par
+    if numero % 2 == 0:
+        lista_pares.append(numero*numero)
+
+print(f'Lista Pares: {lista_pares}')
+
+# Hacemos lo mismo pero con list comprehensions
+# [expresion for var in coleción if condicion]
+# La condición de if es opcional
+lista_pares = []
+lista_pares = [numero*numero for numero in numeros if numero % 2 == 0]
+print(f'Lista Pares con list comprehensions: {lista_pares}')
+
+
+# Un ejemplo simila con dos condiciones (las condiciones son opcionales)
+# Solo se agrega el valor a la lista cuando el valor cumple ambas condiciones
+# es decir, debe ser divisible entre 2 y divisible entre 6
+pares = [numero for numero in range(50) if numero%2==0 if numero%6==0]
+print(f'Lista divisible entre 2 y 6: {pares}')
+
+# Agregando if else
+lista_pares = []
+lista_impares = []
+for numero in range(10):
+    if numero%2==0:
+        lista_pares.append(numero)
+    else:
+        lista_impares.append(numero)
+print(f'Pares: {lista_pares}')
+print(f'Impares: {lista_impares}')
+
+# El mismo ejercicio usando list comprehensions
+lista_pares = []
+lista_impares = []
+[lista_pares.append(numero) if numero%2==0 else lista_impares.append(numero)
+ for numero in range(10)]
+print(f'Pares: {lista_pares}')
+print(f'Impares: {lista_impares}')
+
+# Lista de listas
+lista_listas = [[1,2,3],[4,5,6],[7,8,9,10]]
+# Convertimos la lista de listas en una sola lista
+lista_simple = [valor
+                for sublista in lista_listas
+                for valor in sublista]
+print(f'lista simple: {lista_simple}')
+
+# Ahora creamos una lista de numeros pares a partir de la lista_listas
+# Sin list comprehensions, ciclos for anidados
+lista_pares = []
+for sublista in lista_listas:
+    for valor in sublista:
+        if valor%2==0:
+            lista_pares.append(valor)
+print(f'Lista pares: {lista_pares}')
+
+# Con list comprehensions, en una sola línea de código
+# No es necesario separar las líneas, solo es para mejor lectura de código
+lista_pares = []
+lista_pares = [valor
+               for sublista in lista_listas
+               for valor in sublista
+               if valor%2==0]
+print(f'Lista pares: {lista_pares}')
+
+# Palabras reservadas en Python (keywords)
+import keyword
+
+print('Palabras reservadas (keywords) en Python')
+print(keyword.kwlist)
+
+# Variable (no podemos utilizar keyword para el nombre de una variable)
+# as = 'Hola'
+# Función (no podemos utilizar keyword para el nombre de una función)
+# def is():
+#     pass
+
+# Profundizando en programación orientada a objetos
+# -------------------------------------------------------
+    contador_personas = 0
+
+    def __init__(self, nombre, apellido):
+        self.nombre = nombre
+        self.apellido = apellido
+
+# Mostrar los atributos de un objeto
+persona1 = Persona('Juan','Perez')
+print(persona1.__dict__)
+
+# Crear un atributo al vuelo
+print(persona1.contador_personas) # Accediendo al atributo de clase
+# Pero no es posible modificarlo con el objeto, sino con la clase
+persona1.contador_personas = 10
+print(persona1.__dict__)
+# El atributo anterior oculta al atributo de clase
+print(Persona.contador_personas) # Atributo clase
+print(persona1.contador_personas) # Atributo del objeto 1
+
+# Un segundo objeto
+persona2 = Persona('Karla', 'Gomez')
+print(persona2.__dict__)
+print(persona2.contador_personas)
+
+# Asociar un atributo de clase al vuelo
+Persona.contador2 = 20
+print(Persona.contador2)
+
+# Desde los objetos creados, accedemos al nuevo atributo de la clase
+# Esto es posible por que los atributos de clase se comparten con todos los objetos
+print(persona1.contador2)
+print(persona2.contador2)
+
+# Simulación de sobrecarga de constructores en python
+# otras formas de crear objectos
+class Persona:
+
+    def __init__(self, nombre, apellido):
+        self.nombre = nombre
+        self.apellido = apellido
+
+    @classmethod
+    def crear_persona_vacia(cls):
+        return cls(None, None) # llamar al método init
+
+    @classmethod
+    def crear_persona_con_valores(cls, nombre, apellido):
+        return cls(nombre, apellido)
+
+    def __str__(self):
+        return f'Nombre: {self.nombre}, Apellido: {self.apellido}'
+
+persona1 = Persona('Juan', 'Perez')
+print(persona1)
+
+persona_vacio = Persona.crear_persona_vacia()
+print(persona_vacio)
+
+persona_con_valores = Persona.crear_persona_con_valores('Karla', 'Gomez')
+print(persona_con_valores)
+
+
+class ConvertidorTemperatura:
+    MAX_CELSIUS = 100
+    MAX_FAHRENHEIT = 213
+
+    @classmethod
+    def c_f(cls, celsius):
+        if celsius > cls.MAX_CELSIUS:
+            raise ValueError(f'Temperatura C demasiado alta: {celsius}')
+        return celsius * 9/5 + 32
+
+    @classmethod
+    def f_c(cls, fahrenheit):
+        if fahrenheit > cls.MAX_FAHRENHEIT:
+            raise ValueError(f'Temperatura F demasiado alta: {fahrenheit}')
+        return (fahrenheit-32) * 5/9
+
+if __name__ == '__main__':
+    resultado = ConvertidorTemperatura.c_f(15)
+    print(f'15 C a F: {resultado:.2f}')
+    resultado = ConvertidorTemperatura.f_c(10)
+    print(f'10 F a C: {resultado:.2f}')
+
+# Representación de objetos (str, repr, format)
+# ----------------------------------------------
+# print(dir(object))
+
+class Persona:
+    def __init__(self, nombre, apellido):
+        self.nombre = nombre
+        self.apellido = apellido
+
+    # repr, más enfocado a los programadores
+    def __repr__(self):
+        return f'{self.__class__.__name__}(nombre:{self.nombre}, apellido:{self.apellido})'
+
+    # str es más para el usuario final u otros sistemas
+    # la implementación por default llama al método repr
+    def __str__(self):
+        return f'{self.__class__.__name__}: {self.nombre} {self.apellido}'
+
+    # format su implementación por default es str
+    # se manda a llamar al usar f-string
+    def __format__(self, format_spec):
+        return f'{self.__class__.__name__} con nombre {self.nombre} y apellido {self.apellido}'
+
+persona1 = Persona('Juan','Perez')
+# repr (!r)
+print(f'Mi objeto persona1: {persona1!r}')
+# str (de manera automática el método print llama al método str)
+print(persona1)
+# format
+print(f'{persona1}')
+
+# Ejemplo atributos publicos, protegidos, privados
+class MiClase:
+    def __init__(self, publico, protegido, privado):
+        self.publico = publico
+        self._protegido = protegido
+        self.__privado = privado
+
+
+objeto = MiClase('Valor público', 'Valor protegido', 'Valor privado')
+# Acceso al valor publico
+print(objeto.publico)
+# Modificar el valor publico
+objeto.publico = 'Modificando valor público'
+print(objeto.publico)
+
+# Acceso al valor protegido
+# Solo dentro de la misma clase o clase hija
+print(objeto._protegido)
+# Modificando valor protegido (solo dentro misma clase o subclases)
+objeto._protegido = 'Modificando valor protegido'
+print(objeto._protegido)
+
+# Accediendo al valor privado (solo dentro de la misma clase)
+# Directamente no se puede acceder
+#print(objeto.__privado)
+# Pero, se convierte a objeto._clase__atributo_privado
+print(objeto._MiClase__privado)
+# Incluso se puede modificar
+objeto._MiClase__privado = 'Cambiando valor privado'
+print(objeto._MiClase__privado)
+
+# En conclusión, no se puede comparar con otros lenguajes
+# como C++ o Java, ya que no es la misma funcionalidad
+# ni las mismas limitantes
+# Debemos ser programadores responsables y respetar las buenas prácticas
+# Impuestas en Python
+# En la mayoría de los casos es suficiente con usar un guión bajo
+# para encapsular y ocultar el detalle de una clase si somos programadores responsables
+
+# Orden de inicializacion de objetos
+class Padre:
+    def __init__(self):
+        print('Inicializador Padre')
+
+    def metodo(self):
+        print('Método padre')
+
+class Hijo(Padre):
+    # Se manda a llamar el método __init__ de la clase padre
+    # siempre y cuando la clase hija no defina su propio metodo init
+
+    # Definimos el metodo init
+    def __init__(self):
+        # De manera opcional podemos llamar al metodo __init__ de la clase padre (super)
+        print('Inicializador hijo')
+        super().__init__()
+
+    # Sobreescribimos el metodo heredado de la clase padre
+    def metodo(self):
+        print('Método sobreescrito hijo')
+        super().metodo()
+
+# padre1 = Padre()
+# padre1.metodo()
+hijo1 = Hijo()
+hijo1.metodo()
+
+# Ejemplo de herencia simple
+class ListaSimple:
+    def __init__(self, elementos):
+        self._elementos = list(elementos)
+
+    def agregar(self, elemento):
+        self._elementos.append(elemento)
+
+    def __getitem__(self, indice):
+        return self._elementos[indice]
+
+    def ordenar(self):
+        self._elementos.sort()
+
+    def __len__(self):
+        return len(self._elementos)
+
+    def __repr__(self):
+        return f'{self.__class__.__name__}({self._elementos!r})'
+
+lista_simple = ListaSimple([5, 3, 6, 8])
+print(lista_simple)
+
+
+# Ejemplo de herencia simple
+# ------------------------------------
+class ListaSimple:
+    def __init__(self, elementos):
+        self._elementos = list(elementos)
+
+    def agregar(self, elemento):
+        self._elementos.append(elemento)
+
+    def __getitem__(self, indice):
+        return self._elementos[indice]
+
+    def ordenar(self):
+        self._elementos.sort()
+
+    def __len__(self):
+        return len(self._elementos)
+
+    def __repr__(self):
+        return f'{self.__class__.__name__}({self._elementos!r})'
+
+class ListaOrdenada(ListaSimple):
+    def __init__(self, elementos=[]):
+        super().__init__(elementos)
+        # Ordenamos siempre los elementos una vez inicializados
+        self.ordenar()
+
+    def agregar(self, elemento):
+        super().agregar(elemento)
+        # Ordenamos el nuevo elemento
+        self.ordenar()
+
+# Lista sólo acepta números
+class ListaEnteros(ListaSimple):
+    def __init__(self, elementos=[]):
+        for elemento in elementos:
+            self._validar(elemento)
+        # Una vez validados los elementos, los agregamos
+        super().__init__(elementos)
+
+    def _validar(self, elemento):
+        # Validamos si el elemento es de tipo entero
+        if not isinstance(elemento, int):
+            raise ValueError(f'No es un valor entero: {elemento}')
+
+    # Sobreescribimos el método agregar de la clase padre
+    def agregar(self, elemento):
+        self._validar(elemento)
+        # Una vez validado lo agregamos a la lista
+        super().agregar(elemento)
+
+# Lista de Enteros Ordenada
+class ListaEnterosOrdenada(ListaEnteros, ListaOrdenada):
+    pass
+
+# Lista simple
+lista_simple = ListaSimple([5, 3, 6, 8])
+print(lista_simple)
+# Lista ordenada
+lista_ordenada = ListaOrdenada([4,3,6,9,10,-1])
+print(lista_ordenada)
+lista_ordenada.agregar(-14)
+print(lista_ordenada)
+print(len(lista_ordenada))
+#Lista enteros
+lista_enteros = ListaEnteros([1, 3, 4, -15])
+print(lista_enteros)
+# Lista enteros ordenada
+lista_enteros_ordenada = ListaEnterosOrdenada([4,5,-1, 10, 14, -4])
+print(lista_enteros_ordenada)
+lista_enteros_ordenada.agregar(-20)
+print(lista_enteros_ordenada)
+# Saber las clases padre y su orden
+print(ListaEnterosOrdenada.__bases__)
+# MRO (Method Resolution Order)
+print(ListaEnterosOrdenada.__mro__)
+
+
+# otro ejemplo:
+class Clase1:
+    def __init__(self):
+        print('Clase1.__init__')
+
+    def metodo(self):
+        print('Método clase1')
+
+class Clase2(Clase1):
+    def __init__(self):
+        print('Clase2.__init__')
+
+    def metodo(self):
+        print('Método clase2')
+
+class Clase3(Clase1):
+    def __init__(self):
+        print('Clase3.__init__')
+
+    def metodo(self):
+        print('Método clase3')
+
+class Clase4(Clase2, Clase3):
+
+    def metodo(self):
+        print('Método clase4')
+
+# Creamos objeto clase4
+clase4 = Clase4()
+# __bases__
+print(Clase4.__bases__)
+# mro
+print(Clase4.__mro__)
+# cual método se ejecuta
+clase4.metodo()
+
+# isinstance
+# ---------------------------------------------
+print('Es entero?', isinstance(10, int))
+print('Es cadena?', isinstance('hola', str))
+print('Es lista ent ord?', isinstance(lista_enteros_ordenada, ListaEnterosOrdenada))
+print('Es lista ent?', isinstance(lista_enteros_ordenada, ListaEnteros)) # true
+print('Es lista ord?', isinstance(lista_enteros_ordenada, ListaOrdenada))   # true
+print('Es lista simple?', isinstance(lista_enteros_ordenada, ListaSimple))  # true
+print('Es object?', isinstance(lista_enteros_ordenada, object))
+print('Es de varios tipos?', isinstance(lista_enteros_ordenada, (ListaEnteros, ListaSimple)))
+
+# Decoradores de Clase
+# ----------------------------------------------------------
+# Permiten transformar de manera programática nuestra clase
+# Es similar a los decoradores de funciones (es metaprogramación)
+import inspect
+
+
+def decorador_repr(cls):
+    print('1. Se ejecuta decorador')
+    print(f'Recibimos el objeto de la clase: {cls.__name__}')
+
+    # Revisamos los atributos de la clase con el método vars
+    atributos = vars(cls)
+    # Iteramos cada atributo
+    # for nombre, atributo in atributos.items():
+    #     print(nombre, atributo)
+
+    # Revisamos si se ha sobreescrito el método __init__
+    if '__init__' not in atributos:
+        raise TypeError(f'{cls.__name__} no ha sobreescrito el método __init__')
+
+    firma_init = inspect.signature(cls.__init__)
+    print(f'Firma método __init__: {firma_init}')
+    # Recuperamos los parámetros, excepto el primero que es self
+    parametros_init = list(firma_init.parameters)[1:]
+    print(f'Parámetros init: {parametros_init}')
+
+    # Revisamos si cada parámetro tiene un método property asociado
+    for parametro in parametros_init:
+        # property es un valor de tipo built-in para preguntar si
+        # se está utilizando el decorador property
+        es_metodo_property = isinstance(atributos.get(parametro), property)
+        if not es_metodo_property:
+            raise TypeError(f'No existe un método property para el parámetro: {parametro}')
+
+    # Crear el método repr dinámicamente
+    def metodo_repr(self):
+        # Obtenemos el nombre de la clase dinámicamente
+        nombre_clase = self.__class__.__name__
+        print(f'Nombre clase: {nombre_clase}')
+
+        # Obtenemos los nombres de las propiedades y sus valores dinámicamente
+        # Expresion Generadora, crear nombre_atr=valor_atr
+        generador_arg = (f'{nombre}={getattr(self, nombre)!r}' for nombre in parametros_init)
+        # Lista del generador
+        lista_arg = list(generador_arg)
+        print(f'Lista del generador: {lista_arg}')
+        # Creamos la cadena a partir de la lista de argumentos
+        argumentos = ', '.join(lista_arg)
+        print(f'Argumentos del método repr: {argumentos}')
+        # Creamos la forma del método __repr__, sin su nombre, solo la firma
+        resultado_metodo_repr = f'{nombre_clase}({argumentos})'
+        print(f'Resultado método repr: {resultado_metodo_repr}')
+        return resultado_metodo_repr
+
+    # Agregar dinámicamente el método repr a nuestra clase
+    setattr(cls,'__repr__', metodo_repr)
+
+    return cls
+
+@decorador_repr
+class Persona:
+    def __init__(self, nombre, apellido, edad):
+        print('2. Se ejecuta el inicializador')
+        self._nombre = nombre
+        self._apellido = apellido
+        self._edad = edad
+
+    @property
+    def nombre(self):
+        return self._nombre
+
+    @property
+    def apellido(self):
+        return self._apellido
+
+    @property
+    def edad(self):
+        return self._edad
+
+    # def __repr__(self):
+    #     return f'Persona(nombre={self._nombre}, apellido={self._apellido})'
+
+persona1 = Persona('Juan','Perez', 28)
+print(persona1)
+pesona2 = Persona('Karla','Gomez', 30)
+print(pesona2)
+#Tiene los métodos de propiedad nombre, apellido, repr
+print(dir(Persona))
+# Tiene el método repr sobreescrito
+codigo_repr = inspect.getsource(persona1.__repr__)
+print(codigo_repr)
+
+# DATA CLASES: modulo q agrega cierta funcionalidad a clases
+from dataclasses import dataclass
+from typing import ClassVar
+
+@dataclass(eq=True, frozen=True)
+class Domicilio:
+    calle: str
+    numero: int = 0
+
+@dataclass(eq=True, frozen=True)
+class Persona:
+    nombre: str
+    apellido: str
+    domicilio: Domicilio
+    contador_personas: ClassVar[int] = 0
+
+    def __post_init__(self):
+        if not self.nombre:
+            raise ValueError(f'Valor nombre vacío: {self.nombre}')
+
+domicilio1 = Domicilio('Saturno', 15)
+persona1 = Persona('Juan','Perez', domicilio1)
+print(f'{persona1!r}')
+# Variable de clase
+print(f'Variable clase: {Persona.contador_personas}')
+# Variables de instancia
+print(f'Variables de instancia: {persona1.__dict__}')
+# Variable con valores vacíos
+persona_vacia = Persona('Karla','', None)
+print(f'Persona vacía: {persona_vacia}')
+# Revisar igualdad entre objetos (__eq__)
+persona2 = Persona('Juan','Perez', Domicilio('Saturno', 15))
+print(f'Objetos iguales?: {persona1 == persona2}')
+# Agregar esta clase a una colecciones
+coleccion = {persona1, persona2}
+print(coleccion)
+# Frozen = True
+# coleccion[0].nombre='Juan Carlos'
+# persona1.nombre = 'Juan Carlos'
+
+# JSON
+# ----------------------
+# Leer archivo json
+# json = JavaScript Object Notation
+import urllib.request
+import json
+
+# Debido a cambios en la libreria ahora se deben pasar algunos cabeceros html
+peticion = urllib.request.Request(
+    'http://globalmentoring.com.mx/api/personas.json',
+    data=None,
+    headers={
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.47 Safari/537.36'
+    }
+)
+respuesta = urllib.request.urlopen(peticion)
+print(respuesta)
+cuerpo_respuesta = respuesta.read()
+print(cuerpo_respuesta)
+# Procesamos la respuesta json
+json_respuesta = json.loads(cuerpo_respuesta.decode("utf-8"))
+print(json_respuesta)
+# Imprimimos sólo los nombres de las personas
+# json se convierte a listas y diccionarios de python
+print('Nombres de las personas en el archivo json:')
+for persona in json_respuesta['personas']:
+    print(persona['nombre'], persona['edad'])
+# Accedemos al total de personas de archivo
+print(f'Total de personas: {json_respuesta["total"]}')
+# Accedemos al mensaje del archivo
+print(f'Mensaje: {json_respuesta["mensaje"]}')
+
+# OTRO EJEMPLO
+import json
+import urllib.request
+
+# Debido a cambios en la libreria ahora se deben pasar algunos cabeceros html
+peticion = urllib.request.Request(
+    'http://globalmentoring.com.mx/api/clima.json',
+    data=None,
+    headers={
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.47 Safari/537.36'
+    }
+)
+respuesta = urllib.request.urlopen(peticion)
+# print(respuesta)
+cuerpo_respuesta = respuesta.read()
+#print(cuerpo_respuesta)
+# Procesamos la respuesta json
+json_respuesta = json.loads(cuerpo_respuesta.decode('utf-8'))
+# print(json_respuesta)
+# Ejercicio 1. Acceder a la descripción del clima
+# descripcion_clima = json_respuesta.get('clima')[0].get('descripcion')
+descripcion_clima = json_respuesta['clima'][0]['descripcion']
+print(f'Descripción clima: {descripcion_clima}')
+# Ejercicio 2. Mostrar la temperatura mínima y máxima
+temp_min = json_respuesta.get('principal').get('temp_min')
+print(f'Temperatura mínima: {temp_min}')
+temp_max = json_respuesta.get('principal').get('temp_max')
+print(f'Temperatura máxima: {temp_max}')
+
+# MENUS
+# ---------------
+from tkinter import ttk, Menu
+# Configurar el menú principal
+
+def salir():
+    ventana.quit()
+    ventana.destroy()
+    print('Salimos...')
+    sys.exit()
+
+def crear_menu():
+    # Configurar el menú principal
+    menu_principal = Menu(ventana)
+    #tearoff = False para evitar que se separe el menú de la interfaz
+    submenu_archivo = Menu(menu_principal, tearoff=0)
+    # Agregamos una nueva opción al menú de archivo
+    submenu_archivo.add_command(label='Nuevo')
+    # Agregar un separador
+    submenu_archivo.add_separator()
+    # Agregamos la opción de salir
+    submenu_archivo.add_command(label='Salir', command=salir)
+    # Agregamos el submenu al menu principal
+    menu_principal.add_cascade(menu=submenu_archivo, label='Archivo')
+    # Submenu ayuda
+    submenu_ayuda = Menu(menu_principal, tearoff=0)
+    # Agregamos una nueva opción al submenu
+    submenu_ayuda.add_command(label='Acerca De')
+    # Agregamos al menu principal este nuevo submenu
+    menu_principal.add_cascade(menu=submenu_ayuda, label='Ayuda')
+    # Mostramos el menu en la ventana principal
+    ventana.config(menu=menu_principal)
+
+# hacer que no sea resizable la ventana
+ventana.resizable(0,0)
+
+# EJEMPLO LOGIN
+# --------------------
+import tkinter as tk
+from tkinter import ttk, messagebox
+
+class LoginVentana(tk.Tk):
+    def __init__(self):
+        super().__init__()
+        # ventana principal
+        self.geometry('300x130')
+        self.title('Login')
+        self.iconbitmap('icono.ico')
+        self.resizable(0,0)
+        # configuración del grid
+        self.columnconfigure(0, weight=1)
+        self.columnconfigure(1, weight=3)
+        # Creamos los componentes
+        self._crear_componentes()
+
+    # Definir el método crear_componentes
+    def _crear_componentes(self):
+        # usuario
+        usuario_etiqueta = ttk.Label(self, text='Usuario:')
+        usuario_etiqueta.grid(row=0, column=0, sticky=tk.E, padx=5, pady=5)
+        self.usuario_entrada = ttk.Entry(self)
+        self.usuario_entrada.grid(row=0, column=1, sticky=tk.W, padx=5, pady=5)
+
+        # password
+        password_etiqueta = ttk.Label(self, text='Password:')
+        password_etiqueta.grid(row=1, column=0, sticky=tk.E, padx=5, pady=5)
+        self.password_entrada = ttk.Entry(self, show='*')
+        self.password_entrada.grid(row=1, column=1, sticky=tk.W, padx=5, pady=5)
+
+        # boton Login
+        login_boton = ttk.Button(self, text='Login', command=self._login)
+        login_boton.grid(row=3, column=0, columnspan=2)
+
+
+    def _login(self):
+        messagebox.showinfo('Datos Login',
+            f'usuario: {self.usuario_entrada.get()}, Password: {self.password_entrada.get()}')
+
+# Ejecutar la ventana
+if __name__ == '__main__':
+    login_ventana = LoginVentana()
+    login_ventana.mainloop()
+
+    
